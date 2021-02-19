@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MultipleRecycler</string>
+    <string name="login_app">Login App</string>
+    <string name="welcome_back">Hello there, Welcome Back</string>
+    <string name="sign_in_to_continue">Log in to continue</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="you_can_name">You can enter your username</string>
+    <string name="you_can_password">You can enter your password</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="login">Login</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="welcome">Welcome, New User</string>
+    <string name="login_to_continue">Sign In to start a new account</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+</resources>
