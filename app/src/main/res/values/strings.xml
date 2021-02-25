@@ -26,4 +26,5 @@
     <string name="important_fullname">* Full name is required</string>
     <string name="pincode">Pincode</string>
     <string name="submit">Submit</string>
+    <string name="click_here">Click down image to upload images</string>
 </resources>
