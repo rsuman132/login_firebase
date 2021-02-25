@@ -1,13 +1,13 @@
-package com.rs132studio.multiplerecycler
+package com.rs132studio.multiplerecycler.view
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.view.Window
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import com.rs132studio.multiplerecycler.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -21,8 +21,12 @@ class MainActivity : AppCompatActivity() {
 
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
-        topAnim = AnimationUtils.loadAnimation(this, R.anim.top_anim)
-        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_anim)
+        topAnim = AnimationUtils.loadAnimation(this,
+            R.anim.top_anim
+        )
+        bottomAnim = AnimationUtils.loadAnimation(this,
+            R.anim.bottom_anim
+        )
 
         logo_bg.animation = topAnim
         loginTextView.animation = bottomAnim
@@ -30,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         Handler().postDelayed({
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
-            overridePendingTransition(R.anim.enter_anim, R.anim.exit_anim)
             finish()
         }, 3000)
     }

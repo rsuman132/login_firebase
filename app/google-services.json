@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "876519209187",
+    "project_id": "probable-net-301807",
+    "storage_bucket": "probable-net-301807.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876519209187:android:77c16bc0aa66bb43f5edd6",
+        "android_client_info": {
+          "package_name": "com.rs132studio.multiplerecycler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876519209187-0hf5p1eookjvoe42pckjk2rus00muirl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvTdcAerXMEk6F-_82phbyXDfNBzwIMhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876519209187-0hf5p1eookjvoe42pckjk2rus00muirl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

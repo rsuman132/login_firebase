@@ -14,4 +14,16 @@
     <string name="login_to_continue">Sign In to start a new account</string>
     <string name="full_name">Full Name</string>
     <string name="email">Email</string>
+    <string name="phonenumber">Phone Number</string>
+    <string name="sign_in">Sign In</string>
+    <string name="are_you_new_user">Are you a new user?</string>
+    <string name="field">Field cannot be empty</string>
+    <string name="action_logout">Logout</string>
+    <string name="detail">Display Detail</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="verify_email">Verify email</string>
+    <string name="address">Address</string>
+    <string name="important_fullname">* Full name is required</string>
+    <string name="pincode">Pincode</string>
+    <string name="submit">Submit</string>
 </resources>

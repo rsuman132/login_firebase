@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".view.DisplayDetailActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/display_toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="@string/detail" />
+
+    <ScrollView
+        android:id="@+id/parent_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingBottom="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="40dp"
+                app:cardElevation="0dp"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:id="@+id/customer_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_account"
+                    android:scaleType="fitXY"/>
+
+            </androidx.cardview.widget.CardView>
+            <EditText
+                android:id="@+id/customer_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/full_name"
+                android:padding="10dp"
+                android:background="@drawable/country_code_selected_bg"
+                android:layout_marginBottom="10dp"
+                android:inputType="textCapSentences"
+                android:maxLines="1"
+                android:drawableLeft="@drawable/ic_contact"
+                android:drawablePadding="5dp" />
+
+            <EditText
+                android:id="@+id/customer_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/address"
+                android:padding="10dp"
+                android:background="@drawable/country_code_selected_bg"
+                android:layout_marginBottom="10dp"
+                android:inputType="textCapSentences"
+                android:maxLines="5"
+                android:drawableLeft="@drawable/ic_location"
+                android:drawablePadding="5dp"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"/>
+
+            <EditText
+                android:id="@+id/customer_pin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/pincode"
+                android:padding="10dp"
+                android:background="@drawable/country_code_selected_bg"
+                android:layout_marginBottom="10dp"
+                android:inputType="number"
+                android:maxLines="1"
+                android:drawableLeft="@drawable/ic_person_pin"
+                android:drawablePadding="5dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/customer_ccp"
+                    android:background="@drawable/country_code_selected_bg"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:ccp_defaultNameCode="IN"
+                    app:ccp_textSize="14sp"
+                    android:padding="5dp" />
+
+                <EditText
+                    android:id="@+id/customer_phonenumber"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="@drawable/country_code_selected_bg"
+                    android:padding="5dp"
+                    android:hint="@string/phonenumber"
+                    android:layout_marginLeft="5dp"
+                    android:drawableLeft="@drawable/ic_mobile"
+                    android:drawablePadding="5dp"/>
+            </LinearLayout>
+            <Button
+                android:id="@+id/submitBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/submit"
+                android:textColor="@color/black"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
