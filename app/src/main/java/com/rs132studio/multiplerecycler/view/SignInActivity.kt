@@ -11,11 +11,9 @@ import android.widget.Button
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.rs132studio.multiplerecycler.R
-import com.rs132studio.multiplerecycler.util.HideKeyBoard
-import com.rs132studio.multiplerecycler.util.ProgressButton
-import com.rs132studio.multiplerecycler.util.SnackBarMessage
-import com.rs132studio.multiplerecycler.util.ToastMessage
+import com.rs132studio.multiplerecycler.util.*
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
 class SignInActivity : AppCompatActivity() {
@@ -25,6 +23,7 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var sPassword : TextInputLayout
     private lateinit var sConfirmPassword : TextInputLayout
     private lateinit var view : View
+    private lateinit var user: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,8 +136,9 @@ class SignInActivity : AppCompatActivity() {
 
         firebaseAuth.createUserWithEmailAndPassword(email.trim(), password.trim()).addOnCompleteListener(this, OnCompleteListener { task ->
             if (task.isSuccessful){
+                EmailVerification.verifyEmail(this, view)
                 SnackBarMessage.displaySnack(window.decorView.rootView, "User account created successfully")
-                val intent = Intent(this, DisplayDetailActivity::class.java)
+                val intent = Intent(this, ProfileActivity::class.java)
                 startActivity(intent)
                 finish()
             } else {

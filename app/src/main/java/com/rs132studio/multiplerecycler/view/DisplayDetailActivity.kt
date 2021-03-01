@@ -4,27 +4,25 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.ProgressBar
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 import com.hbb20.CountryCodePicker
 import com.rs132studio.multiplerecycler.R
 import com.rs132studio.multiplerecycler.util.Constant.Companion.CHOOSE_IMG
 import com.rs132studio.multiplerecycler.util.HideKeyBoard
 import com.rs132studio.multiplerecycler.util.ToastMessage
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_display_detail.*
 import java.io.IOException
 
@@ -39,13 +37,12 @@ class DisplayDetailActivity : AppCompatActivity() {
     private lateinit var submitButton : Button
     private lateinit var progressBar: ProgressBar
 
-    private lateinit var uriProfileImage : Uri
-
     private lateinit var storageReference : StorageReference
-    private lateinit var profileImageUrl : String
 
     private lateinit var firebaseFirestore: FirebaseFirestore
     private lateinit var documentReference: DocumentReference
+
+    var imageUri : Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -71,8 +68,8 @@ class DisplayDetailActivity : AppCompatActivity() {
             choseCustomerImage()
         }
 
-        submitButton.setOnClickListener {
-            saveUserInformation()
+        submitButton.setOnClickListener { view->
+            uploadImageInFB(view)
         }
 
 
@@ -86,7 +83,63 @@ class DisplayDetailActivity : AppCompatActivity() {
         //hide key board
     }
 
-    private fun saveUserInformation() {
+    //choose image from gallery
+    private fun choseCustomerImage() {
+       val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select profile image"), CHOOSE_IMG)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when(requestCode) {
+            CHOOSE_IMG -> {
+                if (resultCode == RESULT_OK && data != null){
+                    imageUri = data.data!!
+                    imageUri.let {
+                        launchImageCrop(imageUri!!)
+                    }
+                } else {
+                    ToastMessage.displayToast(this, "Image selection error: Couldn't select that image from memory.")
+                }
+            }
+            CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                val result = CropImage.getActivityResult(data)
+                if (resultCode == RESULT_OK){
+                    imageUri = result.uri
+                    try {
+                        setImage(imageUri!!)
+
+                    }catch (e : IOException){
+                        e.printStackTrace()
+                    }
+                }
+                else if(resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
+                    ToastMessage.displayToast(this, "Crop error: ${result.error}")
+                }
+            }
+        }
+
+    }
+
+    private fun setImage(uri: Uri) {
+        Glide.with(this)
+            .load(uri)
+            .into(customerImg)
+    }
+
+    private fun launchImageCrop(uri: Uri) {
+        CropImage.activity(uri)
+            .setGuidelines(CropImageView.Guidelines.ON)
+            .setAspectRatio(1, 1)
+            .setCropShape(CropImageView.CropShape.RECTANGLE)
+            .start(this)
+    }
+
+    private fun uploadImageInFB(view: View) {
+
         val name = customerName.text.toString()
         val address = customerAddress.text.toString()
         val pin = customerPin.text.toString()
@@ -98,8 +151,8 @@ class DisplayDetailActivity : AppCompatActivity() {
                 customerName.requestFocus()
                 return
             } else -> {
-                    customerName.error = null
-            }
+            customerName.error = null
+        }
         }
 
         when {
@@ -140,98 +193,72 @@ class DisplayDetailActivity : AppCompatActivity() {
                 customerPhone.requestFocus()
                 return
             }
+            phone.length != 10 && !Patterns.PHONE.matcher(phone).matches() -> {
+                customerPhone.error = "Please enter the valid phone number"
+                customerPhone.requestFocus()
+                return
+            }
             else -> {
                 customerPhone.error = null
             }
         }
 
-        val userId : String? = auth.currentUser?.uid
+        when {
+            imageUri == null -> {
+                ToastMessage.displayToast(this, "Please upload your image")
+                return
+            }
+        }
 
-        documentReference = firebaseFirestore.collection("users").document(userId.toString())
+        progressBar.visibility = View.VISIBLE
+        storageReference = FirebaseStorage.getInstance().reference.child("user_image").child("${auth.currentUser?.uid.toString()}.jpg")
+        storageReference.putFile(imageUri!!).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                storageReference.downloadUrl.addOnSuccessListener {uri ->
+                    storeDataToFirebase(uri, name, address, pin, phone)
+                }
 
-        val user : MutableMap<String, Any> = HashMap()
+            } else {
+                ToastMessage.displayToast(this, "${task.exception?.message} occurred please check")
+                progressBar.visibility = View.GONE
+            }
+            progressBar.visibility = View.GONE
+        }
+
+
+}
+
+    private fun storeDataToFirebase(uri: Uri, name: String, address: String, pin: String, phone: String) {
+
+        val userId  = auth.currentUser?.uid.toString()
+        documentReference = firebaseFirestore.collection("users").document(userId)
+        val user : MutableMap<String, String> = HashMap()
+        user["user_image"] = uri.toString()
         user["name"] = name
         user["address"] = address
         user["pin"] = pin
         user["phone"] = phone
 
-        documentReference.set(user).addOnSuccessListener {
-            ToastMessage.displayToast(this, "User : $name created successfully")
-        }.addOnFailureListener {
-            ToastMessage.displayToast(this, it.message)
-        }
-    }
-
-    //choose image from gallery
-    private fun choseCustomerImage() {
-       val intent = Intent()
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Select profile image"), CHOOSE_IMG)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CHOOSE_IMG && resultCode == RESULT_OK && data != null && data.data != null){
-            uriProfileImage = data.data!!
-            try {
-                customerImg.setImageURI(uriProfileImage)
-                uploadImageInFB()
-
-            }catch (e : IOException){
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun uploadImageInFB() {
-        var initialNumber = 1
-        var number = initialNumber
-        if (number == initialNumber){
-            number = initialNumber
-        } else {
-            initialNumber++
-        }
-        storageReference = FirebaseStorage.getInstance().getReference("profile_img$number.jpg")
-        if (uriProfileImage != null){
-            progressBar.visibility = View.VISIBLE
-            storageReference.putFile(uriProfileImage)
-                .addOnSuccessListener {
-                    OnSuccessListener<UploadTask.TaskSnapshot> { taskSnapshot ->
-                        progressBar.visibility = View.GONE
-                        profileImageUrl = taskSnapshot.metadata?.reference?.downloadUrl.toString()
-                    }
-                }
-                .addOnFailureListener {
-                    OnFailureListener {
-                        progressBar.visibility = View.GONE
-                        ToastMessage.displayToast(this@DisplayDetailActivity, it.message)
-                    }
-                }
-        }
-    }
-
-    //menu options
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.action_logout -> {
-                auth.signOut()
-                val intent = Intent(this, LoginActivity::class.java)
+        documentReference.set(user).addOnCompleteListener {task ->
+            if (task.isSuccessful){
+                progressBar.visibility = View.GONE
+                ToastMessage.displayToast(this, "Your information updated successfully")
+                val intent = Intent(this, ProfileActivity::class.java)
                 startActivity(intent)
                 finish()
-                return true
+            } else {
+                progressBar.visibility = View.GONE
+                ToastMessage.displayToast(this, "${task.exception?.message} occurred")
             }
-            R.id.action_verify_email -> {
-                ToastMessage.displayToast(this, "Verification email send to your email account. Please check")
-                return true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
-    //menu options
+
+//    override fun onStart() {
+//        super.onStart()
+//        if (auth.currentUser != null){
+//            val intent = Intent(this, ProfileActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
+//    }
 }

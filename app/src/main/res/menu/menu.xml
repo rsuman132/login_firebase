@@ -2,13 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_logout"
-        android:title="@string/action_logout"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_verify_email"
-        android:title="@string/verify_email"
-        app:showAsAction="never"/>
-
+        android:id="@+id/action_edit"
+        android:title="@string/action_edit"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_edit"
+        android:iconTint="@color/colorPrimary"/>
 </menu>

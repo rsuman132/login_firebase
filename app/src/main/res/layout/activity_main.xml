@@ -24,7 +24,7 @@
         android:text="@string/login_app"
         android:fontFamily="@font/truculenta"
         android:textSize="30sp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/white"/>
 
 
 </LinearLayout>

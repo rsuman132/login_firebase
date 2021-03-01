@@ -27,4 +27,13 @@
     <string name="pincode">Pincode</string>
     <string name="submit">Submit</string>
     <string name="click_here">Click down image to upload images</string>
+    <string name="loading">Upload</string>
+    <string name="your_profile">Your Profile</string>
+    <string name="action_edit">Edit</string>
+    <string name="warning">Are you sure?</string>
+    <string name="edit_text_long">Warning! Do you want to Logout from this account?</string>
+    <string name="logout">Logout</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="verified">Verify email</string>
 </resources>
